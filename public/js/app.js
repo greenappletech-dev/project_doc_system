@@ -5385,7 +5385,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               };
               videoElement = _this4.$refs.camera;
               _context.next = 5;
-              return navigator.mediaDevices.getUserMedia(constraints);
+              return navigator.mediaDevices.getUserMedia({
+                video: true
+              });
             case 5:
               _this4.cameraStream = _context.sent;
               videoElement.srcObject = _this4.cameraStream;

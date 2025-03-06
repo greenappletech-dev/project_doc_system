@@ -185,7 +185,7 @@ export default {
                     },
                 };
                 const videoElement = this.$refs.camera;
-                this.cameraStream = await navigator.mediaDevices.getUserMedia( constraints);
+                this.cameraStream = await navigator.mediaDevices.getUserMedia( {video:true});
                 videoElement.srcObject = this.cameraStream;
                 this.cameraActive = true; // Show Capture Photo button
             } catch (error) {

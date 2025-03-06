@@ -5272,6 +5272,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -5291,7 +5301,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         address: '',
         com_code: '',
         photo: null,
-        capturedPhotoURL: null
+        capturedPhotoURL: null,
+        delivered_id: null,
+        temp_photoURL: null
       },
       projectList: [],
       beneficiaries: [],
@@ -5348,6 +5360,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       if (selectedBeneficiary) {
         this.dataValues.address = selectedBeneficiary.address;
         this.dataValues.com_code = selectedBeneficiary.com_code;
+        this.dataValues.temp_photoURL = selectedBeneficiary.delivered_photo;
+        this.dataValues.delivered_id = selectedBeneficiary.delivered_id;
       } else {
         console.warn("Selected beneficiary not found!");
         this.dataValues.address = '';
@@ -5371,7 +5385,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               };
               videoElement = _this4.$refs.camera;
               _context.next = 5;
-              return navigator.mediaDevices.getUserMedia(constraints);
+              return navigator.mediaDevices.getUserMedia({
+                video: true
+              });
             case 5:
               _this4.cameraStream = _context.sent;
               videoElement.srcObject = _this4.cameraStream;
@@ -5423,6 +5439,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }))();
     },
     retakePhoto: function retakePhoto() {
+      this.dataValues.temp_photoURL = null;
       this.dataValues.capturedPhotoURL = null;
       this.dataValues.photo = null;
       this.startCamera();
@@ -5463,6 +5480,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         formData.append('district_id', this.dataValues.district_id);
         formData.append('project_id', this.dataValues.project_id);
         formData.append('beneficiary_id', this.dataValues.beneficiary_id);
+        formData.append('delivered_id', this.dataValues.delivered_id);
         if (this.dataValues.photo) {
           formData.append('photo', this.dataValues.photo, 'delivery_photo.png');
         }
@@ -50933,56 +50951,38 @@ var render = function () {
           _c("div", { staticClass: "col-md-6 text-center" }, [
             _c("h5", [_vm._v("Capture Photo")]),
             _vm._v(" "),
-            !_vm.dataValues.capturedPhotoURL
-              ? _c("video", {
-                  ref: "camera",
-                  staticClass: "camera-preview",
-                  attrs: { autoplay: "" },
-                })
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.dataValues.capturedPhotoURL
-              ? _c("img", {
-                  staticClass: "captured-photo",
-                  attrs: { src: _vm.dataValues.capturedPhotoURL },
-                })
-              : _vm._e(),
-            _vm._v(" "),
-            _c("canvas", { ref: "canvas", staticClass: "d-none" }),
-            _vm._v(" "),
-            _c("div", { staticClass: "mt-3" }, [
-              !_vm.cameraActive && !_vm.dataValues.capturedPhotoURL
-                ? _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-success btn-sm mx-1",
-                      on: { click: _vm.startCamera },
+            _vm.dataValues.temp_photoURL !== null
+              ? _c("div", [
+                  _c("img", {
+                    staticClass: "captured-photo",
+                    attrs: {
+                      src: _vm.dataValues.temp_photoURL,
+                      alt: "photo-preview",
                     },
-                    [
-                      _vm._v(
-                        "\n                            Start Camera\n                        "
-                      ),
-                    ]
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.cameraActive && !_vm.dataValues.capturedPhotoURL
-                ? _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary btn-sm mx-1",
-                      on: { click: _vm.capturePhoto },
-                    },
-                    [
-                      _vm._v(
-                        "\n                            Capture Photo\n                        "
-                      ),
-                    ]
-                  )
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.dataValues.capturedPhotoURL
-                ? _c(
+                  }),
+                ])
+              : _c("div", [
+                  !_vm.dataValues.capturedPhotoURL
+                    ? _c("video", {
+                        ref: "camera",
+                        staticClass: "camera-preview",
+                        attrs: { autoplay: "" },
+                      })
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.dataValues.capturedPhotoURL
+                    ? _c("img", {
+                        staticClass: "captured-photo",
+                        attrs: { src: _vm.dataValues.capturedPhotoURL },
+                      })
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c("canvas", { ref: "canvas", staticClass: "d-none" }),
+                ]),
+            _vm._v(" "),
+            _vm.dataValues.temp_photoURL !== null
+              ? _c("div", { staticClass: "mt-3" }, [
+                  _c(
                     "button",
                     {
                       staticClass: "btn btn-warning btn-sm mx-1",
@@ -50993,19 +50993,66 @@ var render = function () {
                         "\n                            Retake Photo\n                        "
                       ),
                     ]
-                  )
-                : _vm._e(),
-            ]),
+                  ),
+                ])
+              : _c("div", { staticClass: "mt-3" }, [
+                  !_vm.cameraActive && !_vm.dataValues.capturedPhotoURL
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-success btn-sm mx-1",
+                          on: { click: _vm.startCamera },
+                        },
+                        [
+                          _vm._v(
+                            "\n                            Start Camera\n                        "
+                          ),
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.cameraActive && !_vm.dataValues.capturedPhotoURL
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary btn-sm mx-1",
+                          on: { click: _vm.capturePhoto },
+                        },
+                        [
+                          _vm._v(
+                            "\n                            Capture Photo\n                        "
+                          ),
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.dataValues.capturedPhotoURL
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-warning btn-sm mx-1",
+                          on: { click: _vm.retakePhoto },
+                        },
+                        [
+                          _vm._v(
+                            "\n                            Retake Photo\n                        "
+                          ),
+                        ]
+                      )
+                    : _vm._e(),
+                ]),
           ]),
         ]),
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "card-footer text-right" }, [
-        _c(
-          "button",
-          { staticClass: "btn btn-primary", on: { click: _vm.storeData } },
-          [_vm._v("Save")]
-        ),
+        this.dataValues.temp_photoURL == null
+          ? _c(
+              "button",
+              { staticClass: "btn btn-primary", on: { click: _vm.storeData } },
+              [_vm._v("Save")]
+            )
+          : _vm._e(),
       ]),
     ]),
   ])

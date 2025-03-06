@@ -13,7 +13,6 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-
                         <div class="form-group">
                             <label>Select Documentation Type</label>
                             <select class="form-control" v-model="dataValues.demand_id" @change="saveToLocalStorage">
@@ -57,14 +56,25 @@
 
                     <div class="col-md-6 text-center">
                         <h5>Capture Photo</h5>
+                        <div v-if="dataValues.temp_photoURL !== null">
+                            <img :src="dataValues.temp_photoURL" alt="photo-preview" class="captured-photo">
+                        </div>
+                        <div v-else>
+                            <video v-if="!dataValues.capturedPhotoURL" ref="camera" autoplay class="camera-preview"></video>
 
-                        <video v-if="!dataValues.capturedPhotoURL" ref="camera" autoplay class="camera-preview"></video>
+                            <img v-if="dataValues.capturedPhotoURL" :src="dataValues.capturedPhotoURL" class="captured-photo" />
 
-                        <img v-if="dataValues.capturedPhotoURL" :src="dataValues.capturedPhotoURL" class="captured-photo" />
 
-                        <canvas ref="canvas" class="d-none"></canvas>
+                            <canvas ref="canvas" class="d-none"></canvas>
+                        </div>
 
-                        <div class="mt-3">
+                        <div class="mt-3" v-if="dataValues.temp_photoURL !== null">
+                            <button class="btn btn-warning btn-sm mx-1" @click="retakePhoto">
+                                Retake Photo
+                            </button>
+                        </div>
+                        
+                        <div class="mt-3" v-else>
                             <button v-if="!cameraActive && !dataValues.capturedPhotoURL" class="btn btn-success btn-sm mx-1" @click="startCamera">
                                 Start Camera
                             </button>
@@ -80,7 +90,7 @@
             </div>
 
             <div class="card-footer text-right">
-                <button class="btn btn-primary" @click="storeData">Save</button>
+                <button v-if="this.dataValues.temp_photoURL==null" class="btn btn-primary" @click="storeData">Save</button>
             </div>
         </div>
     </div>
@@ -106,6 +116,8 @@ export default {
                 com_code:'',
                 photo: null,
                 capturedPhotoURL: null,
+                delivered_id: null,
+                temp_photoURL: null,
             },
             projectList: [],
             beneficiaries: [],
@@ -157,6 +169,8 @@ export default {
             if (selectedBeneficiary) {
                 this.dataValues.address = selectedBeneficiary.address;
                 this.dataValues.com_code = selectedBeneficiary.com_code;
+                this.dataValues.temp_photoURL = selectedBeneficiary.delivered_photo;
+                this.dataValues.delivered_id = selectedBeneficiary.delivered_id;
             } else {
                 console.warn("Selected beneficiary not found!");
                 this.dataValues.address = '';
@@ -171,7 +185,7 @@ export default {
                     },
                 };
                 const videoElement = this.$refs.camera;
-                this.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                this.cameraStream = await navigator.mediaDevices.getUserMedia( {video:true});
                 videoElement.srcObject = this.cameraStream;
                 this.cameraActive = true; // Show Capture Photo button
             } catch (error) {
@@ -198,6 +212,7 @@ export default {
         },
 
         retakePhoto() {
+            this.dataValues.temp_photoURL = null;
             this.dataValues.capturedPhotoURL = null;
             this.dataValues.photo = null;
             this.startCamera();
@@ -238,6 +253,7 @@ export default {
             formData.append('district_id', this.dataValues.district_id);
             formData.append('project_id', this.dataValues.project_id);
             formData.append('beneficiary_id', this.dataValues.beneficiary_id);
+            formData.append('delivered_id', this.dataValues.delivered_id);
 
             if (this.dataValues.photo) {
                 formData.append('photo', this.dataValues.photo, 'delivery_photo.png');

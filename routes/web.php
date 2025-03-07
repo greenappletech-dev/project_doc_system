@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('deliveries')->group(function () {
         Route::get('/', [DeliveryController:: class, 'index']);
         Route::get('gather_project/{id}',[DeliveryController::class, 'gather_project']);
-        Route::get('gather_beneficiaries/{id}',[DeliveryController::class, 'gather_beneficiaries']);
+        Route::get('gather_beneficiaries/{id}/{type}',[DeliveryController::class, 'gather_beneficiaries']);
         Route::post('store', [DeliveryController::class, 'store']);
     });
     Route::prefix('demandnotice')->group(function () {
@@ -44,6 +44,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::prefix('notice-viewer')->group(function () {
         Route::get('/', [DeliveryHistoryController::class, 'index']);
+        Route::get('/gather_projects/{id}',[DeliveryHistoryController::class, 'gather_projects']);
+        Route::post('/gather_data', [DeliveryHistoryController::class, 'gather_data']);
     });
 });
 

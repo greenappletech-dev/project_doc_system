@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Delivery;
+use App\Models\District;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,6 +12,42 @@ class DeliveryHistoryController extends Controller
     //
     public function index()
     {
+        $districts = District::select(
+            'districts.id',
+            'districts.name',
+        )->get();
+
+        $curret_date = date('Y-m-d');
+        $from_date = session('from', $curret_date);
+        $to_date = session('to', $curret_date);
+        $district_id = session('district_id', 0);
+        $project_id = session('project_id', 0);
+       
+    
+        return view('deliveryhistory', compact( 'from_date', 'to_date', 'districts', 'district_id','project_id'));
+    }
+    public function gather_projects($id){
+        session(['district_id' => $id]);
+        $projects = DB::table('project_offices')
+            ->select('project_offices.id', 'project_offices.name')
+            ->where('project_offices.district_id', $id)
+            ->get();
+        return response()->json(['data' => $projects], 200);
+    }
+    public function gather_data( Request $request ){
+        $request->validate([
+            'date_from' => 'required|date',
+            'date_to' => 'required|date|after:from_date',
+            'project_id' => 'required'
+        ],[],[
+            'date_from' => 'From Date',
+            'date_to' => 'To Date',
+            'project_id' => 'Project'
+        ]);
+        session(['project_id' => $request->project_id]);
+        session(['from' => $request->date_from]);
+        session(['to' => $request->date_to]);
+
         $deliveries = Delivery::select(
             'deliveries.id',
             'deliveries.photo',
@@ -26,9 +63,11 @@ class DeliveryHistoryController extends Controller
         ->leftJoin('beneficiaries', 'beneficiaries.id', 'deliveries.beneficiary_id')
         ->leftJoin('beneficiary_new_addresses', 'beneficiary_new_addresses.bin', 'beneficiaries.beneficiaries_id')
         ->leftJoin('users', 'users.id', 'deliveries.user_id')
+        ->where('deliveries.project_id', $request->project_id)
+        ->whereBetween('deliveries.date_captured', [$request->date_from, $request->date_to])
         ->get();
-    
-        return view('deliveryhistory', compact('deliveries'));
+
+        return response()->json(['data' => $deliveries], 200);
     }
     
 }

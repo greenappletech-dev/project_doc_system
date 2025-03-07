@@ -158,7 +158,7 @@ export default {
         myChangeProject(project_id) {
             this.dataValues.address='';
             this.dataValues.com_code='';
-            axios.get(`deliveries/gather_beneficiaries/${project_id}`)
+            axios.get(`deliveries/gather_beneficiaries/${project_id}/${this.dataValues.demand_id}`)
                 .then(response => {
                     this.beneficiaries = response.data.data;
                     this.saveToLocalStorage();

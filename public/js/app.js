@@ -5347,7 +5347,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       var _this2 = this;
       this.dataValues.address = '';
       this.dataValues.com_code = '';
-      axios.get("deliveries/gather_beneficiaries/".concat(project_id)).then(function (response) {
+      axios.get("deliveries/gather_beneficiaries/".concat(project_id, "/").concat(this.dataValues.demand_id)).then(function (response) {
         _this2.beneficiaries = response.data.data;
         _this2.saveToLocalStorage();
       });
@@ -5575,12 +5575,54 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['deliveries'],
+  props: ['from_date', 'to_date', 'districts', 'district_id', 'project_id'],
   data: function data() {
     return {
-      tableData: this.deliveries,
+      tableData: [],
+      projects: [],
       selectedPhoto: null,
       columns: ['notice_type_name', 'project_name', 'address', 'beneficiary_name', 'date_captured', 'collector_name', 'actions'],
       options: {
@@ -5591,8 +5633,20 @@ __webpack_require__.r(__webpack_exports__);
           date_captured: 'Date Captured',
           collector_name: 'Collector Name',
           actions: 'Actions'
+        },
+        sortable: ['notice_type_name', 'project_name', 'address', 'beneficiary_name', 'date_captured', 'collector_name'],
+        filterable: ['beneficiary_name'],
+        texts: {
+          filter: "Search"
         }
-      }
+      },
+      dataValues: {
+        district_id: this.district_id > 0 ? this.district_id : '',
+        project_id: this.project_id > 0 ? this.project_id : '',
+        date_from: this.from_date,
+        date_to: this.to_date
+      },
+      errors: []
     };
   },
   methods: {
@@ -5600,9 +5654,31 @@ __webpack_require__.r(__webpack_exports__);
       this.selectedPhoto = row.photo ? "/".concat(row.photo) : '';
       $('#photoModal').modal('show');
     },
+    getProjects: function getProjects() {
+      var _this = this;
+      axios.get("notice-viewer/gather_projects/".concat(this.dataValues.district_id)).then(function (response) {
+        _this.projects = response.data.data;
+        if (_this.dataValues.project_id != '') {
+          _this.gatherData();
+        }
+      });
+    },
+    gatherData: function gatherData() {
+      var _this2 = this;
+      axios.post('notice-viewer/gather_data', this.dataValues).then(function (response) {
+        _this2.tableData = response.data.data;
+      })["catch"](function (error) {
+        _this2.errors = error.response.data.errors;
+      });
+    },
     closeModal: function closeModal() {
       this.selectedPhoto = null;
       $('#photoModal').modal('hide');
+    }
+  },
+  mounted: function mounted() {
+    if (this.dataValues.district_id != '') {
+      this.getProjects();
     }
   }
 });
@@ -10347,7 +10423,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.modal-body img[data-v-cd12e070] {\r\n    max-width: 100%;\r\n    height: auto;\r\n    border-radius: 8px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.modal-body img[data-v-cd12e070] {\r\n    max-width: 100%;\r\n    height: auto;\r\n    border-radius: 8px;\n}\n.custom_btn[data-v-cd12e070]{\r\n    background: none;\r\n    border: none;\r\n    cursor: pointer;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -51091,6 +51167,194 @@ var render = function () {
     _vm._m(0),
     _vm._v(" "),
     _c("div", { staticClass: "card shadow-sm" }, [
+      _c("div", { staticClass: "card-body" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-3" }, [
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "project_id" } }, [
+                _vm._v("Select Distric"),
+              ]),
+              _vm._v(" "),
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.dataValues.district_id,
+                      expression: "dataValues.district_id",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  attrs: { name: "", id: "" },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.dataValues,
+                          "district_id",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                      function ($event) {
+                        return _vm.getProjects()
+                      },
+                    ],
+                  },
+                },
+                _vm._l(_vm.districts, function (district) {
+                  return _c("option", { domProps: { value: district.id } }, [
+                    _vm._v(_vm._s(district.name)),
+                  ])
+                }),
+                0
+              ),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-3" }, [
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "project_id" } }, [
+                _vm._v("Select Project"),
+              ]),
+              _vm._v(" "),
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.dataValues.project_id,
+                      expression: "dataValues.project_id",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  attrs: { name: "", id: "" },
+                  on: {
+                    change: function ($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function (o) {
+                          return o.selected
+                        })
+                        .map(function (o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.$set(
+                        _vm.dataValues,
+                        "project_id",
+                        $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      )
+                    },
+                  },
+                },
+                _vm._l(_vm.projects, function (project) {
+                  return _c("option", { domProps: { value: project.id } }, [
+                    _vm._v(_vm._s(project.name)),
+                  ])
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _vm.errors && _vm.errors.project_id
+                ? _c("span", { staticClass: "text-danger" }, [
+                    _vm._v(_vm._s(_vm.errors.project_id[0])),
+                  ])
+                : _vm._e(),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-3" }, [
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "" } }, [_vm._v("Date From")]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.dataValues.date_from,
+                    expression: "dataValues.date_from",
+                  },
+                ],
+                staticClass: "form-control",
+                attrs: { type: "date" },
+                domProps: { value: _vm.dataValues.date_from },
+                on: {
+                  input: function ($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.dataValues, "date_from", $event.target.value)
+                  },
+                },
+              }),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-3" }, [
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "" } }, [_vm._v("Date To")]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.dataValues.date_to,
+                    expression: "dataValues.date_to",
+                  },
+                ],
+                staticClass: "form-control",
+                attrs: { type: "date" },
+                domProps: { value: _vm.dataValues.date_to },
+                on: {
+                  input: function ($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.dataValues, "date_to", $event.target.value)
+                  },
+                },
+              }),
+            ]),
+          ]),
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-3" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                on: {
+                  click: function ($event) {
+                    return _vm.gatherData()
+                  },
+                },
+              },
+              [_vm._v("Refresh")]
+            ),
+          ]),
+        ]),
+      ]),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card shadow-sm" }, [
       _c(
         "div",
         { staticClass: "card-body" },
@@ -51110,14 +51374,22 @@ var render = function () {
                     _c(
                       "button",
                       {
-                        staticClass: "btn btn-primary",
+                        staticClass: "custom_btn",
                         on: {
                           click: function ($event) {
                             return _vm.openModal(row)
                           },
                         },
                       },
-                      [_vm._v("View")]
+                      [
+                        _c("img", {
+                          attrs: {
+                            src: row.photo,
+                            alt: "preview photo",
+                            width: "50",
+                          },
+                        }),
+                      ]
                     ),
                   ]
                 },

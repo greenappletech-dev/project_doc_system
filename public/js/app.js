@@ -5632,7 +5632,7 @@ __webpack_require__.r(__webpack_exports__);
           beneficiary_name: 'Beneficiary Name',
           date_captured: 'Date Captured',
           collector_name: 'Collector Name',
-          actions: 'Actions'
+          actions: 'View Image'
         },
         sortable: ['notice_type_name', 'project_name', 'address', 'beneficiary_name', 'date_captured', 'collector_name'],
         filterable: ['beneficiary_name'],

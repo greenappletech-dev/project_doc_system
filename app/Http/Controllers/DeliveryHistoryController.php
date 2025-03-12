@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Delivery;
 use App\Models\District;
 use Illuminate\Http\Request;
@@ -64,7 +65,7 @@ class DeliveryHistoryController extends Controller
         ->leftJoin('beneficiary_new_addresses', 'beneficiary_new_addresses.bin', 'beneficiaries.beneficiaries_id')
         ->leftJoin('users', 'users.id', 'deliveries.user_id')
         ->where('deliveries.project_id', $request->project_id)
-        ->whereBetween('deliveries.date_captured', [$request->date_from, $request->date_to])
+        ->whereBetween('deliveries.date_captured', [Carbon::parse($request->date_from)->startOfDay(), Carbon::parse($request->date_to)->endOfDay()])
         ->get();
 
         return response()->json(['data' => $deliveries], 200);

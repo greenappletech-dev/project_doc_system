@@ -93,11 +93,19 @@
                 <button v-if="this.dataValues.temp_photoURL==null" class="btn btn-primary" @click="storeData">Save</button>
             </div>
         </div>
+        <div class="vld-parent">
+            <loading :active="isLoading"
+                     :can-cancel="false"
+                     :is-full-page="fullPage"></loading>
+            <!--            :on-cancel="onCancel"-->
+        </div>
     </div>
 </template>
 
 <script>
 import Select2 from 'v-select2-component';
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 export default {
     props: ['districts', 'documenttion_types'],
     data() {
@@ -122,10 +130,12 @@ export default {
             projectList: [],
             beneficiaries: [],
             cameraStream: null,
-            demandNotices: []
+            demandNotices: [],
+            isLoading: false,
+            fullPage: true,
         };
     },
-    components: { Select2 },
+    components: { Select2, Loading },
     created() {
         this.loadFromLocalStorage();
         this.fetchDemandNotices();
@@ -224,6 +234,7 @@ export default {
             }
         },
         storeData() {
+            
             this.errors = {};
 
                 if (!this.dataValues.demand_id) {
@@ -248,6 +259,7 @@ export default {
 
             let confirmBox = confirm('Are you sure you want to save this data ?');
             if(confirmBox){
+            this.isLoading = true;
             const formData = new FormData();
             formData.append('demand_id', this.dataValues.demand_id);
             formData.append('district_id', this.dataValues.district_id);
@@ -264,6 +276,7 @@ export default {
             })
             .then(response => {
                 console.log(response);
+                this.isLoading = false;
                 this.showSuccessMessage = true;
 
                 setTimeout(() => {

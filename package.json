@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "v-select2-component": "^0.4.7",
+        "vue-loading-overlay": "3.0",
         "vue-simple-alert": "^1.1.1",
         "vue-tables-2": "^2.3.5"
     }

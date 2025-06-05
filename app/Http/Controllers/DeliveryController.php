@@ -25,7 +25,6 @@ class DeliveryController extends Controller
         return view('deliveries', compact('districts', 'documenttion_types'));
     }
     public function store(Request $request){
-        // dd($request->all());
         $request->validate([
             'demand_id' => 'required',
             'project_id' => 'required',
@@ -59,6 +58,12 @@ class DeliveryController extends Controller
                 $delivery->user_id = auth()->user()->id;
                 $delivery->save();
 
+            if($delivery->save()){
+                $beneficiary = Beneficiary::find($request->beneficiary_id);
+                $beneficiary->mobile_number = (string) $request->mobile_number;
+                $beneficiary->save();
+            }
+
         return response()->json([
             'message' => 'Delivery saved successfully!',
             'delivery' => $delivery
@@ -79,7 +84,8 @@ class DeliveryController extends Controller
             'beneficiaries.id', 
             DB::raw("CONCAT(beneficiaries.last_name, ', ', beneficiaries.first_name, ' ', beneficiaries.middle_name) as text"),
             'beneficiary_new_addresses.new_address as address',
-            'beneficiary_new_addresses.com_code'
+            'beneficiary_new_addresses.com_code',
+            'beneficiaries.mobile_number',
             )
             ->leftJoin('beneficiary_new_addresses', 'beneficiary_new_addresses.bin', 'beneficiaries.beneficiaries_id')
             ->where('project_office_id',$id)->orderBy('beneficiaries.last_name', 'Asc')->get();

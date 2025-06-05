@@ -52,6 +52,11 @@
                             <label>ComCode</label>
                             <input type="text" class="form-control" v-model="dataValues.com_code" disabled />
                         </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <input type="number" class="form-control" v-model="dataValues.mobile_number" />
+                            <small v-if="errors.mobile_number" class="text-danger">{{ errors.mobile_number }}</small>
+                        </div>
                     </div>
 
                     <div class="col-md-6 text-center">
@@ -133,6 +138,7 @@ export default {
             demandNotices: [],
             isLoading: false,
             fullPage: true,
+            isMobile:false
         };
     },
     components: { Select2, Loading },
@@ -181,6 +187,7 @@ export default {
                 this.dataValues.com_code = selectedBeneficiary.com_code;
                 this.dataValues.temp_photoURL = selectedBeneficiary.delivered_photo;
                 this.dataValues.delivered_id = selectedBeneficiary.delivered_id;
+                this.dataValues.mobile_number = selectedBeneficiary.mobile_number;
             } else {
                 console.warn("Selected beneficiary not found!");
                 this.dataValues.address = '';
@@ -190,10 +197,15 @@ export default {
         async startCamera() {
             try {
                 const constraints = {
-                    video: {
-                        facingMode: { exact: "environment" }, // Use back camera
-                    },
+                    video:true
                 };
+                if(window.innerWidth <= 768){
+                    constraints = {
+                         video: {
+                            facingMode: { exact: "environment" },
+                        },
+                    };
+                }
                 const videoElement = this.$refs.camera;
                 this.cameraStream = await navigator.mediaDevices.getUserMedia( constraints);
                 videoElement.srcObject = this.cameraStream;
@@ -252,6 +264,11 @@ export default {
                 if (!this.dataValues.photo) {
                     this.errors.photo = "Please capture a delivery photo.";
                 }
+                if (!this.dataValues.mobile_number) {
+                    this.errors.mobile_number = "Please enter a mobile number.";
+                } else if (!/^\d{11}$/.test(this.dataValues.mobile_number)) {
+                    this.errors.mobile_number = "Mobile number must be 11 digits.";
+                }
 
                 if (Object.keys(this.errors).length > 0) {
                     return;
@@ -266,6 +283,7 @@ export default {
             formData.append('project_id', this.dataValues.project_id);
             formData.append('beneficiary_id', this.dataValues.beneficiary_id);
             formData.append('delivered_id', this.dataValues.delivered_id);
+            formData.append('mobile_number', this.dataValues.mobile_number);
 
             if (this.dataValues.photo) {
                 formData.append('photo', this.dataValues.photo, 'delivery_photo.png');

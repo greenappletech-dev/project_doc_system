@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="project_id">Select Distric</label>
+                            <label for="project_id">Select District</label>
                             <select name="" id="" class="form-control" v-model="dataValues.district_id" @change="getProjects()">
                                 <option v-for="district in districts" :value="district.id">{{ district.name }}</option>
                             </select>

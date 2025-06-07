@@ -196,9 +196,7 @@ export default {
         },
         async startCamera() {
             try {
-                const constraints = {
-                    video:true
-                };
+                let constraints = [];
                 if(window.innerWidth <= 768){
                     constraints = {
                          video: {
@@ -206,8 +204,14 @@ export default {
                         },
                     };
                 }
+                else {
+                    constraints = {
+                        video: true
+                    };
+                }
+                console.log("Camera constraints:", constraints);
                 const videoElement = this.$refs.camera;
-                this.cameraStream = await navigator.mediaDevices.getUserMedia( constraints);
+                this.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
                 videoElement.srcObject = this.cameraStream;
                 this.cameraActive = true; // Show Capture Photo button
             } catch (error) {

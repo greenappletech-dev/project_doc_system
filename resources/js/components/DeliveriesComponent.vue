@@ -196,19 +196,11 @@ export default {
         },
         async startCamera() {
             try {
-                let constraints = [];
-                if(window.innerWidth <= 768){
-                    constraints = {
-                         video: {
-                            facingMode: { exact: "environment" },
-                        },
-                    };
-                }
-                else {
-                    constraints = {
-                        video: true
-                    };
-                }
+                let constraints = {
+                        video: {
+                        facingMode: { exact: "environment" },
+                    },
+                };
                 console.log("Camera constraints:", constraints);
                 const videoElement = this.$refs.camera;
                 this.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);

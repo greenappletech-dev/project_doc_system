@@ -5397,40 +5397,33 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           while (1) switch (_context.prev = _context.next) {
             case 0:
               _context.prev = 0;
-              constraints = [];
-              if (window.innerWidth <= 768) {
-                constraints = {
-                  video: {
-                    facingMode: {
-                      exact: "environment"
-                    }
+              constraints = {
+                video: {
+                  facingMode: {
+                    exact: "environment"
                   }
-                };
-              } else {
-                constraints = {
-                  video: true
-                };
-              }
+                }
+              };
               console.log("Camera constraints:", constraints);
               videoElement = _this4.$refs.camera;
-              _context.next = 7;
+              _context.next = 6;
               return navigator.mediaDevices.getUserMedia(constraints);
-            case 7:
+            case 6:
               _this4.cameraStream = _context.sent;
               videoElement.srcObject = _this4.cameraStream;
               _this4.cameraActive = true; // Show Capture Photo button
-              _context.next = 16;
+              _context.next = 15;
               break;
-            case 12:
-              _context.prev = 12;
+            case 11:
+              _context.prev = 11;
               _context.t0 = _context["catch"](0);
               console.error("Error accessing the camera:", _context.t0);
               alert("Unable to access the camera. Please check your browser permissions.");
-            case 16:
+            case 15:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 12]]);
+        }, _callee, null, [[0, 11]]);
       }))();
     },
     capturePhoto: function capturePhoto() {

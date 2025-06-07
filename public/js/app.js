@@ -5400,7 +5400,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               constraints = {
                 video: {
                   facingMode: {
-                    exact: "environment"
+                    ideal: "environment"
                   }
                 }
               };

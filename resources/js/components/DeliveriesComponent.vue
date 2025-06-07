@@ -197,9 +197,9 @@ export default {
         async startCamera() {
             try {
                 let constraints = {
-                        video: {
-                        facingMode: { exact: "environment" },
-                    },
+                    video: {
+                        facingMode: { ideal: "environment" }
+                    }
                 };
                 console.log("Camera constraints:", constraints);
                 const videoElement = this.$refs.camera;

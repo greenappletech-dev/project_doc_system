@@ -25,6 +25,7 @@ window.Vue = require('vue').default;
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('deliveries-component', require('./components/DeliveriesComponent.vue').default);
 Vue.component('delivery_history-component', require('./components/DeliveryHistoryComponent.vue').default);
+Vue.component('view_acount_per_beneficiary-component', require('./components/ViewAccountDocumentationPerBeneficiary.vue').default);
 
 Vue.component('demand-notice-component', require('./components/DemandNoticeComponent.vue').default);
 

@@ -47,6 +47,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/gather_projects/{id}',[DeliveryHistoryController::class, 'gather_projects']);
         Route::post('/gather_data', [DeliveryHistoryController::class, 'gather_data']);
     });
+    Route::prefix('view_beneficiary')->group(function (){
+        Route::get('/', [App\Http\Controllers\ViewAccountDocumentationPerBeneficiaryController::class, 'index']);
+        Route::get('/gather_projects/{id}', [App\Http\Controllers\ViewAccountDocumentationPerBeneficiaryController::class, 'gather_projects']);
+        Route::post('/gather_data', [App\Http\Controllers\ViewAccountDocumentationPerBeneficiaryController::class, 'gather_data']);
+        Route::get('/gather_beneficiaries/{id}', [App\Http\Controllers\ViewAccountDocumentationPerBeneficiaryController::class, 'gather_beneficiaries']);
+    });
 });
 
 // Route::get('/clear-photos', function(){

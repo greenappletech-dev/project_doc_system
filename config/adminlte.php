@@ -312,6 +312,11 @@ return [
             'icon' => 'fas fa-file-invoice',
         ],
         [
+            'text' => ' View Account Documentation Per Beneficiary',
+            'url' => 'view_beneficiary',
+            'icon' => 'fas fa-search',
+        ],
+        [
             'text' => 'Documentation Type',
             'url' => 'demandnotice',
             'icon' => 'fas fa-envelope-open-text',
